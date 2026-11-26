@@ -1,106 +1,90 @@
 <div align="center">
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&duration=2800&pause=1200&color=00FF41&center=true&vCenter=true&width=600&lines=root%40MJBrahmbhatt%3A~%23+whoami;security_researcher;root%40MJBrahmbhatt%3A~%23+id;uid%3D0(offensive_security)+groups%3D(bug_bounty%2Cvapt%2Credteam))](https://git.io/typing-svg)
-
-![profile views](https://komarev.com/ghpvc/?username=MJBrahmbhatt&color=00ff41&style=flat-square&label=connections+established)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&duration=2800&pause=1200&color=00FF41&center=true&vCenter=true&width=700&lines=Mayur+Brahmbhatt;I+don%27t+report+what+I+can%27t+replay;Surat%2C+India+%C2%B7+offensive+security)](https://git.io/typing-svg)
 
 </div>
 
-```diff
-+ [    0.000000] Booting kernel...
-+ [    0.041337] Initializing offensive security toolkit...
-+ [    0.088812] Loading module: recon
-+ [    0.093410] Loading module: exploitation
-+ [    0.097204] Loading module: reporting
-+ [    0.102955] All systems nominal.
+I break web apps, APIs, mobile apps and open-source code for a living, then write it up so the fix is obvious and the proof is boring: one request, one response, one timestamp.
+
+Most of my work sits under NDAs and private programs, so this profile shows how I work rather than a trophy list. When a disclosure goes public I link it here. Not before.
+
+## What I do
+
+| Surface | What that actually means |
+|---|---|
+| **Web and API** | Auth, session and business-logic depth first. IDOR, mass assignment, SSO and JWT flows, GraphQL, race conditions. |
+| **Mobile** | Android and iOS static plus runtime work. Frida, unpinning, and decompiling Flutter/Dart AOT builds with blutter when the logic isn't in the Java layer. |
+| **Source review** | Open-source maintainers' code, read file by file, with PoCs run against the real build. Private advisories, coordinated disclosure. |
+| **Internal VAPT** | Checklist-driven engagements for an enterprise app portfolio: scope, test, report, retest, sign-off. |
+| **Reverse engineering** | Ghidra for binaries, jadx and blutter for apps. |
+
+## How a finding gets made
+
+```mermaid
+flowchart LR
+    A[Scope gate] --> B[Recon]
+    B --> C[Hunt]
+    C --> D{Does it replay?}
+    D -- no --> X[Kill it]
+    D -- yes --> E[Data-flow trace]
+    E --> F[Exploitability proof]
+    F --> G[PoC + negative PoC]
+    G --> H[Triage gate]
+    H --> I[Report]
+    A -. rechecked per asset, per path, at submission .-> I
 ```
 
-## `$ cat about.md`
+Scope is checked three times, not once: per asset, per path, and again at the moment of submission. A host that was in scope on Monday is not automatically in scope on Friday.
 
-```yaml
-role:        Security Researcher / Penetration Tester
-focus:       Web App Pentesting · Bug Bounty Hunting · Internal VAPT · Red Team Automation
-methodology: OWASP WSTG-aligned, evidence-driven, zero-theoretical-findings
-philosophy:  "if it can't be reproduced with a request and a timestamp, it isn't a finding."
-status:      probing for the request the server didn't expect
+## Rules I learned the hard way
+
+<details>
+<summary><b>Open the case notes</b></summary>
+
+<br>
+
+1. **A negative from a rebuilt request means nothing.** If I reconstruct an API call by hand and it fails, that proves my copy is wrong, not that the server is safe. I re-check in a real browser session before writing anything off.
+2. **The UI lies in both directions.** A rich-text editor can escape my payload on screen while the raw POST body still stores it. I test the transport, not the widget.
+3. **"Confirmed" is a claim until there's an artifact.** That goes double for anything produced by an automated agent. A subagent once reported a stored XSS that turned out to be its own DOM write. Now every verdict needs a saved request, response, and screenshot I've opened myself.
+4. **Clean means every file was read.** I don't mark a repository clean on partial coverage, and I don't count a methodology document as proof I tested something.
+5. **Bucket listings aren't findings.** An open listing with nothing sensitive in it is noise. I need real data that shouldn't be there.
+6. **Best-practice headers are not bugs.** Missing HSTS with no attack path wastes a triager's time and my reputation.
+7. **Check for a public PoC first.** If someone already published the issue, mine is a duplicate and the clock already ran out.
+8. **Never paste a live secret into a terminal log.** Credentials get piped through substitution, never echoed.
+
+</details>
+
+## What I'm building
+
+A private, agent-assisted offensive workflow, designed so automation does the legwork and a human signs the verdict.
+
+- **240+ technique playbooks**, one per vulnerability class or stack: XSS, SSRF, SAML, OAuth, request smuggling, Spring Boot, Next.js, Kubernetes, and so on.
+- **Specialist agents** for bug bounty, internal VAPT, lab boxes and mobile, each with its own scope rules and checklist discipline.
+- **A false-positive chain** that has to produce TRUE or FALSE POSITIVE with evidence: data-flow analysis, then an exploitability proof, then a working PoC and a negative PoC showing the preconditions.
+- **Anti-fabrication guards.** Models under failure invent evidence. The pipeline assumes that and verifies self-reported success against the saved artifact.
+- **Small tools** around it: a Wappalyzer-style fingerprinter, a token-usage dashboard, a notes-and-tasks app, MCP bridges for Burp and Ghidra.
+
+The repos are private for now. The ideas aren't, so ask.
+
+## Currently
+
+```text
+[source review]   open-source CVE program: queue, read, prove, report privately, credit
+[bug bounty]      time-boxed recon, skip the swarmed surfaces, ship fast
+[mobile]          Flutter/Dart logic recovery for apps that hide it from jadx
+[disclosure]      reports in with maintainers. CVEs get listed below once public.
 ```
 
-## `$ ls -la arsenal/`
+## Public disclosures
 
-<table>
-<tr><td valign="top" width="50%">
-
-**recon/**
-```
-subfinder    amass       httpx
-katana       gau         nuclei
-shodan       crt.sh      dnsx
-```
-
-**exploitation/**
-```
-burpsuite    sqlmap      ffuf
-dalfox       ghauri      ffuf-idor
-metasploit   nuclei-tpl  turbo-intruder
-```
-
-</td><td valign="top" width="50%">
-
-**post-ex / cracking/**
-```
-hashcat      john         hydra
-responder    impacket
-```
-
-**reporting/**
-```
-cvss-calc    wstg-map     evidence-log
-poc-writer   remediation-guide
-```
-
-</td></tr>
-</table>
-
-## `$ tail -f current_focus.log`
-
-```
-[web app pentesting]   -> OWASP WSTG 12-phase methodology, auth/session/business-logic depth
-[bug bounty hunting]   -> scope-gated recon -> hunt -> validate -> report, evidence over assumption
-[internal VAPT]        -> checklist-driven engagements, retest discipline, no theoretical findings
-[tooling]              -> building and maintaining a private offensive-security automation stack
-```
-
-## `$ curl -s stats.MJBrahmbhatt/github`
+*None published yet. This section fills in as maintainers ship fixes.*
 
 <div align="center">
 
-<img height="165" src="https://github-readme-stats.vercel.app/api?username=MJBrahmbhatt&show_icons=true&theme=chartreuse-dark&hide_border=true&bg_color=0d1117&title_color=00ff41&icon_color=00ff41&text_color=c9d1d9" />
-<img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=MJBrahmbhatt&layout=compact&theme=chartreuse-dark&hide_border=true&bg_color=0d1117&title_color=00ff41&text_color=c9d1d9" />
+<br>
 
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=MJBrahmbhatt&theme=github-dark&hide_border=true&background=0d1117&stroke=00ff41&ring=00ff41&fire=00ff41&currStreakLabel=00ff41" />
-
-</div>
-
-## `$ ./contribution_graph --exploit`
-
-<div align="center">
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/MJBrahmbhatt/MJBrahmbhatt/output/snake-dark.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/MJBrahmbhatt/MJBrahmbhatt/output/snake.svg" />
-  <img alt="a snake eating the contribution graph" src="https://raw.githubusercontent.com/MJBrahmbhatt/MJBrahmbhatt/output/snake.svg" />
-</picture>
-
-</div>
-
----
-
-<div align="center">
-
-```
+```text
 [+] connection closed by remote host.
 ```
-
-![Made with](https://img.shields.io/badge/built_with-Burp%20%26%20coffee-00ff41?style=flat-square&labelColor=0d1117)
 
 </div>
